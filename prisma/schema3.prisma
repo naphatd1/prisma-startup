@@ -1,0 +1,25 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generate-client-db3"
+}
+
+datasource db3 {
+  provider = "postgresql"
+  url      = env("DATABASE_URL_3")
+}
+
+model Admin {
+  id    Int     @id @default(autoincrement())
+  name  String? @db3.VarChar(255)
+  email String  @unique @db3.VarChar(255)
+}
+
+model Account {
+  id       Int      @id @default(autoincrement())
+  name     String?  @map("fullname") @db3.VarChar(255)
+  email    String   @unique @db3.VarChar(255)
+  role     String   @default("member") @db3.VarChar(255)
+  createAt DateTime @default(now())
+
+  @@map("accounts")
+}

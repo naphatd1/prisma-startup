@@ -4,7 +4,7 @@ dotenv.config();
 import cors from 'cors';
 import morgan from 'morgan';
 import path from 'path';
-import { prisma1, prisma2 } from './database/mysql';
+import { prisma1, prisma2, prisma3 } from './database/mysql';
 
 const app: Express = express();
 
@@ -39,6 +39,38 @@ app.get('/customer', async (_: Request, res: Response) => {
   res.status(200).json({
     data: customer,
   });
+});
+
+app.get('/admin', async (_: Request, res: Response) => {
+  const admin = await prisma3.admin.findMany({
+    orderBy: {
+      id: 'desc',
+    },
+  });
+  res.status(200).json({
+    data: admin,
+  });
+});
+
+app.get('/account', async (_: Request, res: Response) => {
+  try {
+    await prisma3.account.create({
+      data: {
+        name: 'test',
+        email: 'naphat.d@gmail.com',
+      },
+    });
+    const account = await prisma3.account.findMany({
+      orderBy: { id: 'desc' },
+    });
+    res.status(200).json({
+      data: account,
+    });
+  } catch (error: any) {
+    if (error.code === 'P2002') {
+      res.status(400).json({ message: error.message });
+    } 
+  }
 });
 
 const port = process.env.PORT || 3000;
