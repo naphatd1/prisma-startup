@@ -4,6 +4,7 @@ dotenv.config();
 import cors from 'cors';
 import morgan from 'morgan';
 import path from 'path';
+import { prisma1, prisma2 } from './database/mysql';
 
 const app: Express = express();
 
@@ -15,6 +16,28 @@ app.use(express.json({ limit: '50mb' }));
 app.get('/', (_: Request, res: Response) => {
   res.status(200).json({
     message: 'API VERSION1.0.0',
+  });
+});
+
+app.get('/user', async (_: Request, res: Response) => {
+  const user = await prisma1.user.findMany({
+    orderBy: {
+      id: 'desc',
+    },
+  });
+  res.status(200).json({
+    data: user,
+  });
+});
+
+app.get('/customer', async (_: Request, res: Response) => {
+  const customer = await prisma2.customer.findMany({
+    orderBy: {
+      id: 'desc',
+    },
+  });
+  res.status(200).json({
+    data: customer,
   });
 });
 
